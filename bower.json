@@ -12,5 +12,11 @@
     "ui/bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "jsonform": "joshfire/jsonform",
+    "underscore": "~1.6.0",
+    "jquery-whenObject": "AndersDJohnson/jquery-whenObject"
+  }
 }
