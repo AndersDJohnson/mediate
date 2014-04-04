@@ -1,0 +1,15 @@
+<h2>{{name}}</h2>
+<ul>
+  {{#each collection.items}}
+    <li>
+      <div data-item="{{json .}}">
+        <a href="{{href}}">
+          {{{_id}}}
+        </a>
+        <a href="{{href}}" class="edit">
+          edit
+        </a>
+      </div>
+    </li>
+  {{/each}}
+</ul>

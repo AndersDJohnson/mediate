@@ -1,0 +1,19 @@
+<a href="{{collection.href}}">api</a>
+<h2>{{name}}</h2>
+<ul>
+  {{#each collection.items}}
+    <li>
+      <div data-item="{{json .}}">
+        <a href="{{href}}">
+          {{name}}
+        </a>
+        <a href="{{href}}" class="list">
+          list
+        </a>
+        <a href="{{href}}" class="add">
+          add
+        </a>
+      </div>
+    </li>
+  {{/each}}
+</ul>
