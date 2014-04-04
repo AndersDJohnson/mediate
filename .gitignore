@@ -1,3 +1,6 @@
+db
+ui/bower_components
+
 # Logs
 logs
 *.log
