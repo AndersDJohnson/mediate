@@ -1,0 +1,16 @@
+{
+  "name": "mediate",
+  "version": "0.0.0",
+  "homepage": "https://github.com/AndersDJohnson/mediate",
+  "authors": [
+    "Anders D. Johnson"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "ui/bower_components",
+    "test",
+    "tests"
+  ]
+}

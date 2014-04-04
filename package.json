@@ -1,0 +1,26 @@
+{
+  "name": "mediate",
+  "version": "0.0.0",
+  "description": "mediate =======",
+  "main": "app.js",
+  "dependencies": {
+    "json-file-db": "~0.0.2",
+    "lodash": "~2.4.1",
+    "express": "~3.5.1",
+    "mkdirp": "~0.3.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/AndersDJohnson/mediate"
+  },
+  "author": "Anders D. Johnson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AndersDJohnson/mediate/issues"
+  },
+  "homepage": "https://github.com/AndersDJohnson/mediate"
+}
