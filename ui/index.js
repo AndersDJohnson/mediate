@@ -55,9 +55,6 @@ var showResources = function () {
       state.resources = data;
 
       var items = data.collection.items;
-      _.each(items, function (item) {
-        // item._resource = _.pick(data, ['name', 'links']);
-      });
 
       var html = render(results.template[0], data);
       $(function () {
@@ -109,7 +106,6 @@ var showResource = function (resource) {
 
       var items = data.collection.items;
       _.each(items, function (item) {
-        // var _resource = _.omit(data, ['links']);
         var _resource = _.extend({}, data);
         _resource.collection = _.omit(_resource.collection, ['items']);
         item._resource = _resource;
@@ -165,7 +161,7 @@ var showFormAdd = function (resource) {
 
 
         var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0].schema,
+          schema: results.schema[0].data,
           options: {
             form: {
               attributes: {
@@ -208,7 +204,7 @@ var showFormEdit = function (item) {
 
   promises.template = $.get('/templates/form.hbs');
 
-  var itemData = _.omit(item, ['_resource']);
+  var itemData = item.data;
 
   $.whenObject(promises)
     .done(function (results) {
@@ -221,7 +217,7 @@ var showFormEdit = function (item) {
         var $container = $html.findWithSelf('.form-container');
 
         var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0].schema,
+          schema: results.schema[0].data,
           data: itemData,
           options: {
             form: {
