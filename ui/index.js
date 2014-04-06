@@ -143,9 +143,7 @@ var showFormAdd = function (resource) {
 
         var html = render(results.template[0], {});
         var $html = $(html);
-        $html.find('.form-container')
-          .andSelf().filter('.form-container')
-          .append($form);
+        $html.findWithSelf('.form-container').append($form);
         $('#form').html($html);
       });
     })
@@ -209,9 +207,7 @@ var showFormEdit = function (item) {
           item: item
         });
         var $html = $(html);
-        $html.find('.form-container')
-          .andSelf().filter('.form-container')
-          .append($form);
+        $html.findWithSelf('.form-container').append($form);
         $('#form').html($html);
       });
     })
