@@ -28,13 +28,7 @@ var alpacaOptions = {
   postRender: function(alpacaForm) {
     window.alpacaForm = alpacaForm;
     var $form = alpacaForm.form.getEl();
-    var method = $form.attr('data-method');
-    if (method) {
-      var $method = $('<input type="hidden" name="_method" />');
-      $method.val(method);
-      $form.append($method);
-      $form.attr('method', 'post');
-    }
+    $form.methodOverride();
     $form.ajaxForm({
       success: function (data, status, xhr, $form) {
         console.log('state.resource', state.resource);
@@ -235,7 +229,7 @@ var showFormEdit = function (item) {
             form: {
               attributes: {
                 action: item.href,
-                'data-method': 'patch'
+                method: 'patch'
               }
             }
           }
