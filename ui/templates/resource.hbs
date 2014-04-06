@@ -3,12 +3,13 @@
   {{#each collection.items}}
     <li>
       <div data-item="{{json .}}">
-        <a href="{{href}}">
-          {{{_id}}}
-        </a>
-        <a href="{{href}}" class="edit">
-          edit
-        </a>
+        id: {{{_id}}}
+        <a href="{{href}}" target="_blank">
+          url</a>
+        <a href="#" class="edit">
+          edit</a>
+        <a href="#" class="delete">
+          delete</a>
       </div>
     </li>
   {{/each}}

@@ -61,19 +61,24 @@ var addResource = function (resource) {
 
 var showResource = function (resource) {
   console.log('resource', resource);
+
+  var href = resource.href || resource.collection.href;
+
   $.whenObject({
-    data: $.get(resource.href),
+    data: $.get(href),
     template: $.get('/templates/resource.hbs')
   })
     .done(function (results) {
       var data = results.data[0];
       var items = data.collection.items;
       _.each(items, function (item) {
-        console.log('data', data);
-        var _resource = _.omit(data, ['links']);
+        // var _resource = _.omit(data, ['links']);
+        var _resource = _.extend({}, data);
         _resource.collection = _.omit(_resource.collection, ['items']);
         item._resource = _resource;
       });
+      console.log('items', items);
+      console.log('data', data);
       var html = render(results.template[0], data);
       $(function () {
         var $html = $(html);
@@ -81,6 +86,11 @@ var showResource = function (resource) {
           e.preventDefault();
           var $el = $(e.currentTarget);
           showFormEdit(getItem($el));
+        });
+        $html.on('click', 'a.delete', function (e) {
+          e.preventDefault();
+          var $el = $(e.currentTarget);
+          deleteItem(getItem($el));
         });
         var $resource = $('#resource');
         $resource.html($html);
@@ -91,6 +101,10 @@ var showResource = function (resource) {
 var onSubmitAdd = function (resource, $form) {
   return function (errors, values) {
     console.log('add', resource, arguments);
+    $.post(resource.collection.href, values)
+      .done(function () {
+        showResource(resource);
+      });
   };
 };
 
@@ -102,9 +116,12 @@ var showFormAdd = function (resource) {
 
   var href = collectionHref;
 
+  var schemaLink = _.findWhere(resource.links, {rel: 'schema'});
+  var schemaHref = schemaLink.href;
+
   var promises = {};
   promises.schema = $.ajax({
-    url: collectionHref + '/schema'
+    url: schemaHref
   });
 
   $.whenObject(promises)
@@ -130,6 +147,11 @@ var showFormAdd = function (resource) {
 var onSubmitEdit = function (item, $form) {
   return function (errors, values) {
     console.log('edit', item, arguments);
+    var resource = item._resource;
+    $.patch(item.href, values)
+      .done(function () {
+        showResource(resource);
+      });
   };
 };
 
@@ -137,22 +159,27 @@ var showFormEdit = function (item) {
   console.log('item', item);
 
   var resource = item._resource;
+
+  console.log('resource', resource);
+
   var collectionHref = resource.collection.href;
   var idProperty = resource.collection.idProperty;
 
   var href = collectionHref + '/' + item[idProperty];
 
+  var schemaLink = _.findWhere(resource.links, {rel: 'schema'});
+  var schemaHref = schemaLink.href;
+
   var promises = {};
   promises.schema = $.ajax({
-    url: collectionHref + '/schema'
+    url: schemaHref
   });
 
-  promises.value = $.ajax({
-    url: href
-  });
+  var itemData = _.omit(item, ['_resource']);
 
   $.whenObject(promises)
     .done(function (results) {
+      console.log(results);
       $(function () {
         var $form = $('<form>');
         $form.attr({
@@ -160,8 +187,8 @@ var showFormEdit = function (item) {
           method: 'post'
         });
         $form.jsonForm({
-          schema: results.schema[0],
-          value: results.value[0].item,
+          schema: results.schema,
+          value: itemData,
           onSubmit: onSubmitEdit(item, $form)
         });
         $('#form').html($form);
@@ -169,6 +196,20 @@ var showFormEdit = function (item) {
     })
     .fail(function (results) {
       console.error('FAILURE', results);
+    });
+};
+
+var deleteItem = function (item) {
+  console.log('item', item);
+
+  var resource = item._resource;
+  var idProperty = resource.collection.idProperty;
+
+  console.log('resource', resource);
+
+  $.delete(item.href)
+    .done(function () {
+      showResource(resource);
     });
 };
 
