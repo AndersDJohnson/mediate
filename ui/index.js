@@ -17,6 +17,7 @@ var getItem = function ($el) {
 var alpacaOptions = {
   ui: 'bootstrap',
   options: {
+    hideInitValidationError: true,
     renderForm: true,
     form: {
       buttons: {
