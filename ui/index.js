@@ -54,7 +54,7 @@ var addResource = function (resource) {
   })
     .done(function (results) {
       console.log(results);
-      var data = results.data;
+      var data = results.data[0];
       showFormAdd(data);
     });
 };
@@ -120,12 +120,16 @@ var showFormAdd = function (resource) {
   var schemaHref = schemaLink.href;
 
   var promises = {};
+
   promises.schema = $.ajax({
     url: schemaHref
   });
 
+  promises.template = $.get('/templates/form.hbs');
+
   $.whenObject(promises)
     .done(function (results) {
+      console.log('results', results);
       $(function () {
         var $form = $('<form>');
         $form.attr({
@@ -133,10 +137,16 @@ var showFormAdd = function (resource) {
           method: 'put'
         });
         $form.jsonForm({
-          schema: results.schema,
+          schema: results.schema[0],
           onSubmit: onSubmitAdd(resource, $form)
         });
-        $('#form').html($form);
+
+        var html = render(results.template[0], {});
+        var $html = $(html);
+        $html.find('.form-container')
+          .andSelf().filter('.form-container')
+          .append($form);
+        $('#form').html($html);
       });
     })
     .fail(function (results) {
@@ -171,9 +181,12 @@ var showFormEdit = function (item) {
   var schemaHref = schemaLink.href;
 
   var promises = {};
+
   promises.schema = $.ajax({
     url: schemaHref
   });
+
+  promises.template = $.get('/templates/form.hbs');
 
   var itemData = _.omit(item, ['_resource']);
 
@@ -187,11 +200,19 @@ var showFormEdit = function (item) {
           method: 'post'
         });
         $form.jsonForm({
-          schema: results.schema,
+          schema: results.schema[0],
           value: itemData,
           onSubmit: onSubmitEdit(item, $form)
         });
-        $('#form').html($form);
+
+        var html = render(results.template[0], {
+          item: item
+        });
+        var $html = $(html);
+        $html.find('.form-container')
+          .andSelf().filter('.form-container')
+          .append($form);
+        $('#form').html($html);
       });
     })
     .fail(function (results) {
