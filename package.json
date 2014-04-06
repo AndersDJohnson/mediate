@@ -8,7 +8,8 @@
     "lodash": "~2.4.1",
     "express": "~3.5.1",
     "mkdirp": "~0.3.5",
-    "statuses": "^1.0.2"
+    "statuses": "^1.0.2",
+    "express-params": "0.0.3"
   },
   "devDependencies": {},
   "scripts": {
