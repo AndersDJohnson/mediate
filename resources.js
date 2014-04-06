@@ -3,6 +3,7 @@ module.exports = function (resource) {
   resource({
     name: 'user',
     schema: {
+      type: "object",
       properties: {
         name: {
           title: 'Name',

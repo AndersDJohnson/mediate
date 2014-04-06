@@ -15,11 +15,13 @@
   ],
   "dependencies": {
     "jquery": "~2.1.0",
-    "jsonform": "joshfire/jsonform",
-    "underscore": "~1.6.0",
     "jquery-whenObject": "*",
     "handlebars": "~1.3.0",
     "jquery-methodOverride": "*",
-    "jquery-findWithSelf": "*"
+    "jquery-findWithSelf": "*",
+    "alpaca": "*",
+    "jquery-tmpl": "*",
+    "lodash": "~2.4.1",
+    "jquery-form": "~3.46.0"
   }
 }

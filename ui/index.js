@@ -14,6 +14,41 @@ var getItem = function ($el) {
   return $el.closest('[data-item]').data('item');
 };
 
+var alpacaOptions = {
+  ui: 'bootstrap',
+  options: {
+    renderForm: true,
+    form: {
+      buttons: {
+        submit: {},
+        reset: {}
+      }
+    }
+  },
+  postRender: function(alpacaForm) {
+    window.alpacaForm = alpacaForm;
+    var $form = alpacaForm.form.getEl();
+    var method = $form.attr('data-method');
+    if (method) {
+      var $method = $('<input type="hidden" name="_method" />');
+      $method.val(method);
+      $form.append($method);
+      $form.attr('method', 'post');
+    }
+    $form.ajaxForm({
+      success: function (data, status, xhr, $form) {
+        console.log('state.resource', state.resource);
+        showResource(state.resource);
+      }
+    });
+  }
+};
+
+var state = {
+  resources: null,
+  resource: null
+};
+
 var showResources = function () {
   $.whenObject({
     data: $.get('/api'),
@@ -21,10 +56,14 @@ var showResources = function () {
   })
     .done(function (results) {
       var data = results.data[0];
+
+      state.resources = data;
+
       var items = data.collection.items;
       _.each(items, function (item) {
         // item._resource = _.pick(data, ['name', 'links']);
       });
+
       var html = render(results.template[0], data);
       $(function () {
         var $html = $(html);
@@ -70,6 +109,9 @@ var showResource = function (resource) {
   })
     .done(function (results) {
       var data = results.data[0];
+
+      state.resource = data;
+
       var items = data.collection.items;
       _.each(items, function (item) {
         // var _resource = _.omit(data, ['links']);
@@ -77,6 +119,7 @@ var showResource = function (resource) {
         _resource.collection = _.omit(_resource.collection, ['items']);
         item._resource = _resource;
       });
+
       console.log('items', items);
       console.log('data', data);
       var html = render(results.template[0], data);
@@ -96,16 +139,6 @@ var showResource = function (resource) {
         $resource.html($html);
       });
     });
-};
-
-var onSubmitAdd = function (resource, $form) {
-  return function (errors, values) {
-    console.log('add', resource, arguments);
-    $.post(resource.collection.href, values)
-      .done(function () {
-        showResource(resource);
-      });
-  };
 };
 
 var showFormAdd = function (resource) {
@@ -131,36 +164,33 @@ var showFormAdd = function (resource) {
     .done(function (results) {
       console.log('results', results);
       $(function () {
-        var $form = $('<form>');
-        $form.attr({
-          action: href,
-          method: 'put'
+        var html = render(results.template[0], {
+          item: item
         });
-        $form.jsonForm({
-          schema: results.schema[0],
-          onSubmit: onSubmitAdd(resource, $form)
-        });
-
-        var html = render(results.template[0], {});
         var $html = $(html);
-        $html.findWithSelf('.form-container').append($form);
+        var $container = $html.findWithSelf('.form-container');
+
+
+        var options = _.merge({}, alpacaOptions, {
+          schema: results.schema[0],
+          data: itemData,
+          options: {
+            form: {
+              attributes: {
+                action: resource.collection.href,
+                method: "post"
+              }
+            }
+          }
+        });
+        $container.alpaca(options);
+
         $('#form').html($html);
       });
     })
     .fail(function (results) {
       console.error('FAILURE', results);
     });
-};
-
-var onSubmitEdit = function (item, $form) {
-  return function (errors, values) {
-    console.log('edit', item, arguments);
-    var resource = item._resource;
-    $.patch(item.href, values)
-      .done(function () {
-        showResource(resource);
-      });
-  };
 };
 
 var showFormEdit = function (item) {
@@ -190,24 +220,29 @@ var showFormEdit = function (item) {
 
   $.whenObject(promises)
     .done(function (results) {
-      console.log(results);
+      console.log('results', results);
       $(function () {
-        var $form = $('<form>');
-        $form.attr({
-          action: href,
-          method: 'post'
-        });
-        $form.jsonForm({
-          schema: results.schema[0],
-          value: itemData,
-          onSubmit: onSubmitEdit(item, $form)
-        });
-
         var html = render(results.template[0], {
           item: item
         });
         var $html = $(html);
-        $html.findWithSelf('.form-container').append($form);
+        var $container = $html.findWithSelf('.form-container');
+
+        var options = _.merge({}, alpacaOptions, {
+          schema: results.schema[0],
+          data: itemData,
+          options: {
+            form: {
+              attributes: {
+                action: item.href,
+                'data-method': 'patch'
+              }
+            }
+          }
+        });
+        console.log(options);
+        $container.alpaca(options);
+
         $('#form').html($html);
       });
     })
