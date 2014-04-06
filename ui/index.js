@@ -158,16 +158,13 @@ var showFormAdd = function (resource) {
     .done(function (results) {
       console.log('results', results);
       $(function () {
-        var html = render(results.template[0], {
-          item: item
-        });
+        var html = render(results.template[0]);
         var $html = $(html);
         var $container = $html.findWithSelf('.form-container');
 
 
         var options = _.merge({}, alpacaOptions, {
           schema: results.schema[0],
-          data: itemData,
           options: {
             form: {
               attributes: {
