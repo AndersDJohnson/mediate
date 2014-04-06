@@ -165,7 +165,7 @@ var showFormAdd = function (resource) {
 
 
         var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0],
+          schema: results.schema[0].schema,
           options: {
             form: {
               attributes: {
@@ -221,7 +221,7 @@ var showFormEdit = function (item) {
         var $container = $html.findWithSelf('.form-container');
 
         var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0],
+          schema: results.schema[0].schema,
           data: itemData,
           options: {
             form: {
