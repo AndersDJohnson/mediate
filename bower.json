@@ -23,6 +23,7 @@
     "jquery-tmpl": "*",
     "lodash": "~2.4.1",
     "jquery-form": "~3.46.0",
-    "bootstrap": "~3.1.1"
+    "bootstrap": "~3.1.1",
+    "jsonform": "joshfire/jsonform"
   }
 }

@@ -14,31 +14,6 @@ var getItem = function ($el) {
   return $el.closest('[data-item]').data('item');
 };
 
-var alpacaOptions = {
-  ui: 'bootstrap',
-  options: {
-    hideInitValidationError: true,
-    renderForm: true,
-    form: {
-      buttons: {
-        submit: {},
-        reset: {}
-      }
-    }
-  },
-  postRender: function(alpacaForm) {
-    window.alpacaForm = alpacaForm;
-    var $form = alpacaForm.form.getEl();
-    $form.methodOverride();
-    $form.ajaxForm({
-      success: function (data, status, xhr, $form) {
-        console.log('state.resource', state.resource);
-        showResource(state.resource);
-      }
-    });
-  }
-};
-
 var state = {
   resources: null,
   resource: null
@@ -86,7 +61,7 @@ var addResource = function (resource) {
     .done(function (results) {
       console.log(results);
       var data = results.data[0];
-      showFormAdd(data);
+      prepareFormAdd(data);
     });
 };
 
@@ -119,7 +94,7 @@ var showResource = function (resource) {
         $html.on('click', 'a.edit', function (e) {
           e.preventDefault();
           var $el = $(e.currentTarget);
-          showFormEdit(getItem($el));
+          prepareFormEdit(getItem($el));
         });
         $html.on('click', 'a.delete', function (e) {
           e.preventDefault();
@@ -132,7 +107,7 @@ var showResource = function (resource) {
     });
 };
 
-var showFormAdd = function (resource) {
+var prepareFormAdd = function (resource) {
   console.log('resource', resource);
 
   var collectionHref = resource.collection.href;
@@ -155,25 +130,13 @@ var showFormAdd = function (resource) {
     .done(function (results) {
       console.log('results', results);
       $(function () {
-        var html = render(results.template[0]);
-        var $html = $(html);
-        var $container = $html.findWithSelf('.form-container');
 
-
-        var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0].data,
-          options: {
-            form: {
-              attributes: {
-                action: resource.collection.href,
-                method: "post"
-              }
-            }
-          }
+        showFormAdd({
+          resource: resource,
+          schema: results.schema[0],
+          template: results.template[0]
         });
-        $container.alpaca(options);
 
-        $('#form').html($html);
       });
     })
     .fail(function (results) {
@@ -181,7 +144,7 @@ var showFormAdd = function (resource) {
     });
 };
 
-var showFormEdit = function (item) {
+var prepareFormEdit = function (item) {
   console.log('item', item);
 
   var resource = item._resource;
@@ -204,38 +167,57 @@ var showFormEdit = function (item) {
 
   promises.template = $.get('/templates/form.hbs');
 
-  var itemData = item.data;
-
   $.whenObject(promises)
     .done(function (results) {
-      console.log('results', results);
+
       $(function () {
-        var html = render(results.template[0], {
-          item: item
-        });
-        var $html = $(html);
-        var $container = $html.findWithSelf('.form-container');
 
-        var options = _.merge({}, alpacaOptions, {
-          schema: results.schema[0].data,
-          data: itemData,
-          options: {
-            form: {
-              attributes: {
-                action: item.href,
-                method: 'patch'
-              }
-            }
-          }
+        showFormEdit({
+          item: item,
+          resource: resource,
+          schema: results.schema[0],
+          template: results.template[0]
         });
-        console.log(options);
-        $container.alpaca(options);
 
-        $('#form').html($html);
       });
     })
     .fail(function (results) {
       console.error('FAILURE', results);
+    });
+};
+
+var addItem = function (item, options) {
+  console.log('item', item);
+  console.log('options', options);
+
+  var resource = options.resource;
+  var collection = resource.collection;
+  var idProperty = collection.idProperty;
+
+  console.log('resource', resource);
+  var url = collection.href;
+  console.log('url', url);
+
+  $.post(url, item)
+    .done(function () {
+      showResource(resource);
+    });
+};
+
+var editItem = function (item, options) {
+  console.log('item', item);
+  console.log('options', options);
+
+  var resource = options.resource;
+  var idProperty = resource.collection.idProperty;
+
+  console.log('resource', resource);
+  var url = options.item.href;
+  console.log('url', url);
+
+  $.put(url, item)
+    .done(function () {
+      showResource(resource);
     });
 };
 
