@@ -1,6 +1,6 @@
 {
   "name": "mediate",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "mediate =======",
   "main": "app.js",
   "dependencies": {
@@ -17,7 +17,7 @@
     "type": "git",
     "url": "git://github.com/AndersDJohnson/mediate"
   },
-  "author": "Anders D. Johnson",
+  "author": "Anders D. Johnson (https://andersdjohnson.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/AndersDJohnson/mediate/issues"
